@@ -30,3 +30,13 @@ Chapter 2 of PMPP
 
 ---
 
+# Day 3:
+Learned about multidimensional grid organization how its matched with the dimensions of data and learned about memory space and how to map  threads with data points giving that multidimesional arrays are all flattened and studied an example of converting a RGB image to gray scale.
+
+Code:
+matrix multiplication kernel.
+
+Read:
+part of chapter 3 of PMPP
+
+---
