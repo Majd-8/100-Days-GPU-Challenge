@@ -20,7 +20,7 @@ __global__ void matrixMultiplicationKernel(float *matrix1, float *matrix2, float
 
 int main()
 {
-    const int N = 5;
+    const int N = 64;
 
     float *A_h = new float[N*N];
     float *B_h = new float[N*N];
