@@ -40,3 +40,14 @@ Read:
 part of chapter 3 of PMPP
 
 ---
+
+# Day 4:
+Had a very busy day, so I revised some of the key concepts I learned in the past three days and checked multiple code examples. Also watched a tutorial on C programming language basics since I don't have prior knowledge in C and learned more about its syntax and basic functions.
+
+Code:
+matrix addition kernel.
+
+Read:
+Some online aricles and blogs with CUDA code examples.
+
+---
