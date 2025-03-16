@@ -1,83 +1,96 @@
-#include <iostream>
-#include <cuda_runtime.h>
+#include<iostream>
+#include<cuda_runtime.h>
+#include<time.h>
+#include<stdlib.h>
 
-__global__ void matrixAdditionKernel(float *matrixA, float *matrixB, float *matrixC, int N) 
+__global__ void imageBlurKernel(float *out, float *in, int height, int width, int blurSize)
 {
-    int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
 
-    if (row < N && col < N) {
-        matrixC[row * N + col] = matrixA[row * N + col] + matrixB[row * N + col];
+    //printf("thread (%d,%d) of block (%d,%d)",threadIdx.y,threadIdx.x,blockIdx.y,blockIdx.x);
+    if(row < height && col < width)
+    {
+        int pixels = 0;
+        float sum = 0;
+        // printf("row %d:\t", row);
+        // printf("col %d:\n", col);
+
+        int linearizedIndex = row*width + col;
+
+        for(int i = -blurSize; i < (blurSize + 1); ++i)
+        {
+            for(int j = -blurSize; j < (blurSize + 1); ++j)
+            {
+                int blurRow = row + i;
+                int blurCol = col + j;
+                // printf("blurRow: %d\t", blurRow);
+                // printf("blurCol: %d\n", blurCol);
+                if(blurRow >= 0 && blurRow < height && blurCol >= 0 && blurCol < width)
+                {
+                    sum += in[blurRow*width + blurCol];
+                    pixels += 1;
+                    // printf("sum: %f\t", sum);
+                    // printf("pixels: %f\n", pixels);
+                }
+
+            }
+        }
+        out[linearizedIndex] = sum / pixels;
+        // printf("out = %f\n",out[linearizedIndex]);
     }
 }
 
-int main() {
-    const int N = 10;
+int main()
+{
+    int height = 3;
+    int width  = 3;
+    int sizeArray = height*width;
+    int blur = 1;
+    int size = height * width * sizeof(int);
 
-    float *A_h = new float[N*N];
-    float *B_h = new float[N*N];
-    float *C_h = new float[N*N];
+    float *A_h = new float[sizeArray];
+    float *B_h = new float[sizeArray];
 
-    for(int i  = 0; i < N; ++i)
+    for(int i = 0; i < (height*width); i++)
     {
-        for(int j  = 0; j < N; ++j)
+        A_h[i] = rand() % 101;
+    }
+
+    printf("A = \n");
+    for(int i = 0; i < height; i++)
+    {
+        for(int j = 0; j < width; j++)
         {
-            A_h[i * N + j] = i * N + j;
-            B_h[i * N + j] = 10;
+            printf("%f\t",A_h[i * width + j]);
         }
-    }   
+        printf("\n");
+    }
 
-    float *A_d, *B_d, *C_d;
-    int size = N*N * sizeof(float);
-
+    float *A_d, *B_d;
     cudaMalloc((void **)&A_d, size);
     cudaMalloc((void **)&B_d, size);
-    cudaMalloc((void **)&C_d, size);
-
+    
     cudaMemcpy(A_d, A_h, size, cudaMemcpyHostToDevice);
     cudaMemcpy(B_d, B_h, size, cudaMemcpyHostToDevice);
-    cudaMemcpy(C_d, C_h, size, cudaMemcpyHostToDevice);
-    
-    dim3 dimBlock(8, 4, 1);
-    dim3 dimGrid(ceil(N / 8.0f), ceil(N / 4.0f), 1);
 
-    matrixAdditionKernel<<<dimGrid, dimBlock>>>(A_d, B_d, C_d, N);
+    dim3 dimGrid(2, 2, 1);
+    dim3 dimBlock(5, 5, 1);
 
-    cudaMemcpy(C_h, C_d, size, cudaMemcpyDeviceToHost);
+    imageBlurKernel<<<dimGrid, dimBlock>>>(B_d, A_d, height, width, blur);
 
+    cudaMemcpy(B_h, B_d, size, cudaMemcpyDeviceToHost);
+
+    printf("A after blurring = \n");
+    for(int i = 0; i < height; i++)
+    {
+        for(int j = 0; j < width; j++)
+        {
+            printf("%f\t",B_h[i * width + j]);
+        }
+        printf("\n");
+    }
     cudaFree(A_d);
     cudaFree(B_d);
-    cudaFree(C_d);
 
-    printf("A =\n");
-    for(int i = 0; i < N; ++i)
-    {
-        for(int j = 0; j < N; ++j)
-        {
-            printf("%f\t", A_h[i * N + j]);
-        }
-        printf("\n");
-    }
-
-    printf("B =\n");
-    for(int i = 0; i < N; ++i)
-    {
-        for(int j = 0; j < N; ++j)
-        {
-            printf("%f\t", B_h[i * N + j]);
-        }
-        printf("\n");
-    }
-
-    printf("C =\n");
-    for(int i = 0; i < N; ++i)
-    {
-        for(int j = 0; j < N; ++j)
-        {
-            printf("%f\t", C_h[i * N + j]);
-        }
-        printf("\n");
-    }
-
-    return 0;
 }
