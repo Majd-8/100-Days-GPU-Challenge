@@ -63,3 +63,14 @@ Read:
 finished chapter 3 of PMPP.
 
 ---
+
+# Day 6:
+Learned about modern GPUs architecture and how blocks and threads are scheduled.
+
+Code:
+Matrix multiplication kernel where each thread produce one output matrix row (Chapter 3 exercises).
+
+Read:
+Chapter 4 of PMPP.
+
+---
