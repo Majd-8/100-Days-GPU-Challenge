@@ -93,3 +93,16 @@ Chapter 4 of PMPP.
 
 
 ---
+
+# Day 7:
+Learned about memory architecture and how to organize and position data for access efficiency, Also revisited some key ideas from chapter 4.
+These two chapters, 5 and 4, needs more focus than the previous ones but they are very enjoyable.
+
+Code:
+Matrix transposing kernel
+https://github.com/Majd-8/100-Days-GPU-Challenge/blob/main/Code/Day%207/Matrix%20Transpose.cu
+
+Read:
+Chapter 5 of PMPP.
+
+---
