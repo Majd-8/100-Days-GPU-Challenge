@@ -106,3 +106,15 @@ Read:
 Chapter 5 of PMPP.
 
 ---
+
+# Day 8:
+Revisied key ideas from chapter 5, and Learned about global memory coalescing, and how to hide memory latency with memory parallelism.
+
+Code:
+2-D convolutional 
+https://github.com/Majd-8/100-Days-GPU-Challenge/blob/main/Code/Day%208/2DConvolution.cu
+
+Read:
+Half of chapter 6 of PMPP.
+
+---
